@@ -19,7 +19,7 @@ Func saveConfig() ;Saves the controls settings to the config
 
 	If $ichkExtraAlphabets = 1 Then	 FileOpen($config, $FO_UTF16_LE + $FO_OVERWRITE)
 
-	Local $frmBotPos = WinGetPos($sBotTitle)
+	Local $frmBotPos = WinGetPos($sMODTitle)
 
 	IniWrite($config, "general", "cmbProfile", _GUICtrlComboBox_GetCurSel($cmbProfile))
 	IniWrite($config, "general", "frmBotPosX", $frmBotPos[0])
@@ -449,6 +449,16 @@ Func saveConfig() ;Saves the controls settings to the config
        IniWrite($config, "options", "chkDrillZapTH", "0")
     EndIf
 
+	;save troops option
+	If GUICtrlRead($chkChangeFF) = $GUI_CHECKED Then
+		IniWrite($config, "options", "ChkSTFFBarch", 1)
+	Else
+		IniWrite($config, "options", "ChkSTFFBarch", 0)
+	EndIf
+
+	IniWrite($config, "options", "txtTHpercentCollectors", GUICtrlRead($txtTHpercentCollectors))
+
+
     For $i = 1 to 24
 	   If GUICtrlRead(Eval("cmbDeDeploy" & StringRight("0" & $i,2))) <> $DeDeployEmptyString Then
 	      IniWrite($config, "options", "DeDeployType" & $i,_GUICtrlComboBox_GetCurSel(Eval("cmbDeDeploy" & StringRight("0" & $i,2)))-1)
@@ -457,6 +467,21 @@ Func saveConfig() ;Saves the controls settings to the config
 	   EndIf
 	   IniWrite($config, "options", "DeDeployPosition" & $i,GUICtrlRead(Eval("txtDeStyle" & StringRight("0" & $i,2))))
     Next
+
+	IniWrite($config, "options", "cmbSniperTroop", _GUICtrlComboBox_GetCurSel($cmbSniperTroop) + 1)
+
+	  ;Others Settings--------------------------------------------------------------------------
+		 If GUICtrlRead($chkSwitchDonate) = $GUI_CHECKED Then
+			IniWrite($config, "Others", "SwitchDonate", 1)
+		 Else
+			IniWrite($config, "Others", "SwitchDonate", 0)
+		 EndIf
+
+		 If GUICtrlRead($chkMultyFarming) = $GUI_CHECKED Then
+			IniWrite($config, "Others", "MultyFarming", 1)
+		 Else
+			IniWrite($config, "Others", "MultyFarming", 0)
+		 EndIf
 
 	;End Battle Settings------------------------------------------------------------------------
 	IniWrite($config, "endbattle", "txtTimeStopAtk", GUICtrlRead($txtTimeStopAtk))
@@ -632,6 +657,27 @@ Func saveConfig() ;Saves the controls settings to the config
 	IniWrite($config, "advanced", "maxUnBrkelixir", GUICtrlRead($txtUnBrkMaxElixir))
 	IniWrite($config, "advanced", "maxUnBrkdark", GUICtrlRead($txtUnBrkMaxDark))
 
+	IniWrite($config, "advanced", "TsSearchMode", _GUICtrlComboBox_GetCurSel($cmbTsSearchMode))
+
+	IniWrite($config, "advanced", "TSMeetGE", _GUICtrlComboBox_GetCurSel($cmbTSMeetGE))
+	If GUICtrlRead($chkTSMeetDE) = $GUI_CHECKED Then
+		IniWrite($config, "advanced", "TSMeetDE", 1)
+	Else
+		IniWrite($config, "advanced", "TSMeetDE", 0)
+	EndIf
+
+	If GUICtrlRead($chkTsMeetOne) = $GUI_CHECKED Then
+		IniWrite($config, "advanced", "TSMeetOne", 1)
+	Else
+		IniWrite($config, "advanced", "TSMeetOne", 0)
+	EndIf
+
+	IniWrite($config, "advanced", "TSsearchGold", GUICtrlRead($txtTSMinGold))
+	IniWrite($config, "advanced", "TSsearchElixir", GUICtrlRead($txtTSMinElixir))
+	IniWrite($config, "advanced", "TSsearchGoldPlusElixir", GUICtrlRead($txtTSMinGoldPlusElixir))
+	IniWrite($config, "advanced", "TSsearchDark", GUICtrlRead($txtTSMinDarkElixir))
+
+    IniWrite($config, "advanced", "cmbSnipeSprint", _GUICtrlComboBox_GetCurSel($cmbSnipeSprint))
 	;atk their king
 	;attk their queen
 
@@ -1366,6 +1412,7 @@ Func saveConfig() ;Saves the controls settings to the config
 	EndIf
 	IniWrite($config, "SnipeWhileTrain", "txtSearchlimit", GUICtrlRead($txtSearchlimit))
 	IniWrite($config, "SnipeWhileTrain", "txtminArmyCapacityTHSnipe", GUICtrlRead($txtminArmyCapacityTHSnipe))
+	IniWrite($config, "SnipeWhileTrain", "txtmaxArmyCapacityTHSnipe", GUICtrlRead($txtmaxArmyCapacityTHSnipe))
 	IniWrite($config, "SnipeWhileTrain", "SWTtiles", GUICtrlRead($txtSWTTiles))
 
 	;Multilanguage

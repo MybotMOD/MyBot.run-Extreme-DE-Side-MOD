@@ -1,4 +1,11 @@
 **/Profiles
 **/Backup
 **/lib/debug
+**/Thumbs.db
+**/.DS_Store
 *.exe
+EnableMBRDebug.txt
+LastVersion.txt
+images/main.bmp
+images/temp.bmp
+images/Second.bmp

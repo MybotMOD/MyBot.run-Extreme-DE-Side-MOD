@@ -41,6 +41,9 @@ EndIf
 $sBotVersion = "v5.0.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it it also use on Checkversion()
 $sBotTitle = "My Bot " & $sBotVersion & " " & $DEFAULT_WIDTH & "x" & $DEFAULT_HEIGHT & " "
 
+$sMODVersion = "v1.0.7"
+$sMODTitle = "Extreme DE Side MOD " & $sMODVersion & " powered by My Bot " & $sBotVersion
+
 #include "COCBot\functions\Main Screen\Android.au3"
 
 If $CmdLine[0] < 2 Then
@@ -51,13 +54,13 @@ EndIf
 $sBotTitle = $sBotTitle & "(" & ($AndroidInstance <> "" ? $AndroidInstance : $Android) & ")"
 
 Local $cmdLineHelp = "Please specify as first command line parameter a different Profile (01-06). With second a different Android Emulator and with third an Android Instance. Supported Emulators are BlueStacks, BlueStacks2 and Droid4X. Only Droid4X supports running different instances at the same time."
-If _Singleton($sBotTitle, 1) = 0 Then
-	MsgBox(0, $sBotTitle, "Bot for " & $Android & ($AndroidInstance <> "" ? " (instance " & $AndroidInstance & ")" : "") & " is already running." & @CRLF & @CRLF & $cmdLineHelp)
+If _Singleton($sMODTitle, 1) = 0 Then
+	MsgBox(0, $sMODTitle, "Bot for " & $Android & ($AndroidInstance <> "" ? " (instance " & $AndroidInstance & ")" : "") & " is already running." & @CRLF & @CRLF & $cmdLineHelp)
 	Exit
 EndIf
 
 If _Singleton(StringReplace($sProfilePath & "\" & $sCurrProfile, "\", "-"), 1) = 0 Then
-	MsgBox(0, $sBotTitle, "Bot with Profile " & $sCurrProfile & " is already running in " & $sProfilePath & "\" & $sCurrProfile & "." & @CRLF & @CRLF & $cmdLineHelp)
+	MsgBox(0, $sMODTitle, "Bot with Profile " & $sCurrProfile & " is already running in " & $sProfilePath & "\" & $sCurrProfile & "." & @CRLF & @CRLF & $cmdLineHelp)
 	Exit
 EndIf
 
@@ -120,9 +123,9 @@ While 1
 ;			MsgBox(64 + $MB_APPLMODAL + $MB_TOPMOST, $sBotTitle, "Clash of Clans Bot" & @CRLF & @CRLF & _
 ;					"Version: " & $sBotVersion & @CRLF & _
 ;					"Released under the GNU GPLv3 license.", 0, $frmBot)
-			MsgBox(64 + $MB_APPLMODAL + $MB_TOPMOST, "Extreme DE Side MOD", "Extreme DE Side MOD" & @CRLF & _
-					"Version: 1.02" & @CRLF & @CRLF & _
-					"Modification of MyBot.run" & @CRLF & _
+			MsgBox(64 + $MB_APPLMODAL + $MB_TOPMOST, $sMODTitle, "Extreme DE Side MOD" & @CRLF & _
+					"Version: " & $sMODVersion & @CRLF & @CRLF & _
+					"Powered by MyBot.run" & @CRLF & _
 					"The original open source Clash of Clans Bot" & @CRLF & _
 					"Version: " & $sBotVersion & @CRLF & @CRLF & _
 					"Released under the GNU GPLv3 license.", 0, $frmBot)
@@ -141,7 +144,7 @@ Func runBot() ;Bot that runs everything in order
 		checkMainScreen()
 		If $Restart = True Then ContinueLoop
 
-		If $Is_ClientSyncError = False and $Is_SearchLimit=false Then
+		If $Is_ClientSyncError = False and $Is_SearchLimit=false and $iSnipeSprintCount = 0 Then
 			If BotCommand() Then btnStop()
 			If _Sleep($iDelayRunBot2) Then Return
 			checkMainScreen(False)
@@ -155,6 +158,7 @@ Func runBot() ;Bot that runs everything in order
 			If $RequestScreenshot = 1 Then PushMsg("RequestScreenshot")
 			If _Sleep($iDelayRunBot3) Then Return
 			VillageReport()
+			DetectAccount()
 			ProfileSwitch()
 			If $OutOfGold = 1 And ($iGoldCurrent >= $itxtRestartGold) Then ; check if enough gold to begin searching again
 				$OutOfGold = 0 ; reset out of gold flag
@@ -192,7 +196,8 @@ Func runBot() ;Bot that runs everything in order
 			If _Sleep($iDelayRunBot3) Then Return
 			If $Restart = True Then ContinueLoop
 			If $ichkTrainLightSpell = 1 Then
-                DrillZapSpell() ; Drill Zap
+			   SetLog("Auto Train Lighting Spell")
+				DrillZapSpell() ; Drill Zap
             EndIf
 			If _Sleep($iDelayRunBot1) Then Return
 			checkMainScreen(False) ; required here due to many possible exits
@@ -214,6 +219,10 @@ Func runBot() ;Bot that runs everything in order
 			BoostWarden()
 			If $Restart = True Then ContinueLoop
 			RequestCC()
+			If $ichkSwitchDonate = 1 Then
+			   SetLog("Change Account For Donate")
+			   SwitchDonate()
+			EndIf
 			If _Sleep($iDelayRunBot1) Then Return
 			checkMainScreen(False) ; required here due to many possible exits
 			If $Restart = True Then ContinueLoop
@@ -240,6 +249,10 @@ Func runBot() ;Bot that runs everything in order
 			SaveStatChkTownHall()
 			SaveStatChkDeadBase()
 			If $CommandStop <> 0 And $CommandStop <> 3 Then
+				if $iSnipeSprint > 0 And $OptTrophyMode = 1 Then
+					SetLog("Beginning snipe sprint")
+					$iSnipeSprintCount = 5 * $iSnipeSprint
+				EndIf
 				AttackMain()
 				If $OutOfGold = 1 Then
 					Setlog("Switching to Halt Attack, Stay Online/Collect mode ...", $COLOR_RED)
@@ -254,10 +267,16 @@ Func runBot() ;Bot that runs everything in order
 
 		Else ;When error occours directly goes to attack
 			If $Is_SearchLimit = False Then
-				SetLog("Restarted after Out of Sync Error: Attack Now", $COLOR_RED)
-;				$iNbrOfOoS += 1
-;				UpdateStats()
-;				PushMsg("OutOfSync")
+                If $iSnipeSprintCount>0 Then
+					UpdateStats()
+					SETLOG("Snipe sprints remaining: "& $iSnipeSprintCount)
+					$iSnipeSprintCount = $iSnipeSprintCount - 1
+				Else
+					SetLog("Restarted after Out of Sync Error: Attack Now", $COLOR_RED)
+;				    $iNbrOfOoS += 1
+;				    UpdateStats()
+;				    PushMsg("OutOfSync")
+				EndIf
 			Else
 				If $debugsetlog = 1 Then Setlog("return from searchLimit, restart searches (" & $CurCamp & "/" & $TotalCamp &")",$COLOR_PURPLE)
 				;OPEN ARMY OVERVIEW WITH NEW BUTTON
@@ -299,7 +318,22 @@ Func runBot() ;Bot that runs everything in order
 			EndIf
 			If _Sleep($iDelayRunBot5) Then Return
 			If $Restart = True Then ContinueLoop
-		EndIf
+		 EndIf
+			If $ichkMultyFarming = 1 Then
+			   SetLog("Multy Farming Mode Activated", $COLOR_Green)
+			   If $iVillageName = "Main" Then
+				  SwitchSecond()
+				  _GUICtrlComboBox_SetCurSel($cmbProfile, 1)
+				  cmbProfile()
+				  $RunState = True
+				  $fullArmy = True
+			   ElseIf $iVillageName = "Second" Then
+				  SwitchMain()
+				  _GUICtrlComboBox_SetCurSel($cmbProfile, 0)
+				  cmbProfile()
+				  $RunState = True
+			   EndIf
+			EndIf
 	WEnd
 EndFunc   ;==>runBot
 

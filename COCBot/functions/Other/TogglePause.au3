@@ -10,8 +10,8 @@ Func TogglePauseImpl($Source)
    Local $BlockInputPausePrev
 	$TPaused = NOT $TPaused
 	If $TPaused and $Runstate = True Then
-		TrayTip($sBotTitle, "", 1)
-		TrayTip($sBotTitle, "was Paused!", 1, $TIP_ICONEXCLAMATION)
+		TrayTip($sMODTitle, "", 1)
+		TrayTip($sMODTitle, "was Paused!", 1, $TIP_ICONEXCLAMATION)
 		Setlog("Bot was Paused!",$COLOR_RED)
 		If Not $bSearchMode Then
 			$iTimePassed += Int(TimerDiff($sTimer))
@@ -24,8 +24,8 @@ Func TogglePauseImpl($Source)
 		GUICtrlSetState($btnResume, $GUI_SHOW)
 		;GUICtrlSetState($btnMakeScreenshot, $GUI_ENABLE)
 	ElseIf $TPaused = False And $Runstate = True Then
-		TrayTip($sBotTitle, "", 1)
-		TrayTip($sBotTitle, "was Resumed.", 1, $TIP_ICONASTERISK)
+		TrayTip($sMODTitle, "", 1)
+		TrayTip($sMODTitle, "was Resumed.", 1, $TIP_ICONASTERISK)
 		Setlog("Bot was Resumed.",$COLOR_GREEN)
 		If Not $bSearchMode Then
 			$sTimer = TimerInit()

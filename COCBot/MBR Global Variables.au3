@@ -62,6 +62,8 @@ Else
 	$Compiled = @ScriptName & " Script"
 EndIf
 
+Global $sMODVersion, $sMODTitle
+
 Global $hBitmap; Image for pixel functions
 Global $hHBitmap; Handle Image for pixel functions
 Global $hBitmapScreenshot; Image for screenshot functions
@@ -182,7 +184,7 @@ Global $iChkAttackNow, $iAttackNowDelay, $bBtnAttackNowPressed = False
 Global $PushToken = ""
 Global $PushToken2 = ""
 Global Enum $DB, $LB, $TS, $TB, $DT
-Global $iModeCount = 2
+Global $iModeCount = 3
 Global $iMatchMode ; 0 Dead / 1 Live / 2 TH Snipe / 3 TH Bully / 4 Drop Trophy
 Global $sModeText[5]
 $sModeText[$DB] = "Dead Base"
@@ -250,11 +252,11 @@ Global $iSearchCost, $iTrainCostElixir, $iTrainCostDElixir ; search and train tr
 Global $iNbrOfOoS ; number of Out of Sync occurred
 Global $iNbrOfTHSnipeFails, $iNbrOfTHSnipeSuccess ; number of fails and success while TH Sniping
 Global $iGoldFromMines, $iElixirFromCollectors, $iDElixirFromDrills ; number of resources gain by collecting mines, collectors, drills
-Global $iAttackedVillageCount[$iModeCount + 2] ; number of attack villages for DB, LB, TB, TS
-Global $iTotalGoldGain[$iModeCount + 2], $iTotalElixirGain[$iModeCount + 2], $iTotalDarkGain[$iModeCount + 2], $iTotalTrophyGain[$iModeCount + 2] ; total resource gains for DB, LB, TB, TS
-Global $iNbrOfDetectedMines[$iModeCount + 2], $iNbrOfDetectedCollectors[$iModeCount + 2], $iNbrOfDetectedDrills[$iModeCount + 2] ; number of mines, collectors, drills detected for DB, LB, TB
-Global $lblAttacked[$iModeCount + 2], $lblTotalGoldGain[$iModeCount + 2], $lblTotalElixirGain[$iModeCount + 2], $lblTotalDElixirGain[$iModeCount + 2], $lblTotalTrophyGain[$iModeCount + 2]
-Global $lblNbrOfDetectedMines[$iModeCount + 2], $lblNbrOfDetectedCollectors[$iModeCount + 2], $lblNbrOfDetectedDrills[$iModeCount + 2]
+Global $iAttackedVillageCount[$iModeCount + 1] ; number of attack villages for DB, LB, TB, TS
+Global $iTotalGoldGain[$iModeCount + 1], $iTotalElixirGain[$iModeCount + 1], $iTotalDarkGain[$iModeCount + 1], $iTotalTrophyGain[$iModeCount + 1] ; total resource gains for DB, LB, TB, TS
+Global $iNbrOfDetectedMines[$iModeCount + 1], $iNbrOfDetectedCollectors[$iModeCount + 1], $iNbrOfDetectedDrills[$iModeCount + 1] ; number of mines, collectors, drills detected for DB, LB, TB
+Global $lblAttacked[$iModeCount + 1], $lblTotalGoldGain[$iModeCount + 1], $lblTotalElixirGain[$iModeCount + 1], $lblTotalDElixirGain[$iModeCount + 1], $lblTotalTrophyGain[$iModeCount + 1]
+Global $lblNbrOfDetectedMines[$iModeCount + 1], $lblNbrOfDetectedCollectors[$iModeCount + 1], $lblNbrOfDetectedDrills[$iModeCount + 1]
 
 ;Global $costspell
 
@@ -263,7 +265,7 @@ Global $bSearchMode = False
 Global $Is_ClientSyncError = False ;If true means while searching Client Out Of Sync error occurred.
 Global $searchGold, $searchElixir, $searchDark, $searchTrophy, $searchTH ;Resources of bases when searching
 Global $SearchGold2 = 0, $SearchElixir2 = 0, $iStuck = 0, $iNext = 0
-Global $iCmbSearchMode
+Global $iCmbSearchMode, $iCmbTsSearchMode
 Global $iMinGold[$iModeCount], $iMinElixir[$iModeCount], $iMinGoldPlusElixir[$iModeCount], $iMinDark[$iModeCount], $iMinTrophy[$iModeCount], $iMaxTH[$iModeCount], $iEnableAfterCount[$iModeCount], $iCmbWeakMortar[$iModeCount], $iCmbWeakWizTower[$iModeCount] ; Minimum Resources conditions
 Global $iAimGold[$iModeCount], $iAimElixir[$iModeCount], $iAimGoldPlusElixir[$iModeCount], $iAimDark[$iModeCount], $iAimTrophy[$iModeCount], $iAimTHtext[$iModeCount] ; Aiming Resource values
 Global $iChkSearchReduction
@@ -303,7 +305,6 @@ Global $chkTrophyMode
 Global $ATBullyMode
 Global $YourTH
 Global $iTHBullyAttackMode
-;~ Global $icmbAttackTHType
 Global $scmbAttackTHType = "Bam"
 Global $txtAttackTHType
 Global $iNbOfSpots
@@ -316,6 +317,7 @@ Global $CheckHeroes
 Global $KingSlotTH
 Global $QueenSlotTH
 ; Attack TH snipe
+Global $iAttackTHType
 Global $icmbDeployBtmTHType
 Global $ichkUseKingTH = 0
 Global $ichkUseQueenTH = 0
@@ -333,6 +335,9 @@ Global $ichkSmartLightSpell
 global $ichkTrainLightSpell
 Global $iDrills[4][4] = [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]] ; [LocX, LocY, BldgLvl, Quantity=filled by other functions]
 Global $smartZapGain = 0
+Global $iSnipeSprint = 0
+Global $iSnipeSprintCount = 0
+Global $iSniperTroop = 0
 Global $NumLTSpellsUsed = 0
 Global $ichkDrillZapTH
 Global $itxtMinDark
@@ -817,6 +822,7 @@ Global $tempSnipeWhileTrain[8] = [0, 0, 0, 0, 0, 0, 0, 0]
 Global $iChkSnipeWhileTrain = 0
 Global $itxtSearchlimit = 15
 Global $itxtminArmyCapacityTHSnipe = 35
+Global $itxtmaxArmyCapacityTHSnipe = 85
 Global $itxtSWTtiles = 1
 
 Global $iChkRestartSearchLimit  = 0
@@ -865,7 +871,7 @@ Global $ichkTrophySwitchMax, $itxtMaxTrophyAmount, $icmbTrophyMaxProfile, $ichkT
 ;Hero Healing Filter
 Global $LBsave[17], $LBHeroFilter, $LBAQFilter, $LBBKFilter, $iSkipCentreDE, $iSkipUndetectedDE, $DECorepix = 15
 Global $LBBKEQFilter
-Global 	$iCmbMeetGEHero, $iChkMeetDEHero, $iChkMeetTrophyHero, $iChkMeetTHHero, $iChkMeetTHOHero, $iChkWeakBaseHero, $iChkMeetOneHero, $iEnableAfterCountHero, $iMinGoldHero
+Global $iCmbMeetGEHero, $iChkMeetDEHero, $iChkMeetTrophyHero, $iChkMeetTHHero, $iChkMeetTHOHero, $iChkWeakBaseHero, $iChkMeetOneHero, $iEnableAfterCountHero, $iMinGoldHero
 Global $iMinElixirHero, $iMinGoldPlusElixirHero,$iMinDarkHero, $iMinTrophyHero, $iCmbTHHero, $iCmbWeakMortarHero, $iCmbWeakWizTowerHero, $iMaxTHHero
 Global $THString
 
@@ -886,3 +892,15 @@ Global $cmbTroopComp
 Global $ichkCoCStats = 0
 Global $stxtAPIKey = ""
 Global $MyApiKey = ""
+
+; savetroops
+Global $saveTroops = 0
+Global $countFindPixCloser = 0
+Global $countCollectorexposed = 0
+
+;dual account
+Global $ichkSwitchDonate
+Global $ichkMultyFarming
+
+; Attack settings
+Global Enum $eOneSide, $eTwoSides, $eThreeSides, $eAllSides, $eSmartSave, $eFourFinger, $eDESide, $eTHSide

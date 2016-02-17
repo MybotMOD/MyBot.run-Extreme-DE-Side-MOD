@@ -29,7 +29,7 @@ Local $x = 30, $y = 200
 			$txtTip = "Set the amount of Gold to trigger switching Profile."
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetLimit(-1, 7)
-$y += 30
+	$y += 30
 		$chkGoldSwitchMin = GUICtrlCreateCheckbox("Switch To", $x, $y - 5, -1, -1)
 			$txtTip = "Enable this to switch profiles when gold is below amount."
 			GUICtrlSetTip(-1, $txtTip)
@@ -61,7 +61,7 @@ $y += 50
 			$txtTip = "Set the amount of Elixir to trigger switching Profile."
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetLimit(-1, 7)
-$y += 30
+	$y += 30
 		$chkElixirSwitchMin = GUICtrlCreateCheckbox("Switch To", $x, $y - 5, -1, -1)
 			$txtTip = "Enable this to switch profiles when Elixir is below amount."
 			GUICtrlSetTip(-1, $txtTip)
@@ -92,7 +92,7 @@ $y += 50
 			$txtTip = "Set the amount of Dark Elixir to trigger switching Profile."
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetLimit(-1, 6)
-$y += 30
+	$y += 30
 		$chkDESwitchMin = GUICtrlCreateCheckbox("Switch To", $x, $y - 5, -1, -1)
 			$txtTip = "Enable this to switch profiles when Dark Elixir is below amount."
 			GUICtrlSetTip(-1, $txtTip)
@@ -123,7 +123,7 @@ $y += 50
 			$txtTip = "Set the amount of Trophies to trigger switching Profile."
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetLimit(-1, 4)
-$y += 30
+	$y += 30
 		$chkTrophySwitchMin = GUICtrlCreateCheckbox("Switch To", $x, $y - 5, -1, -1)
 			$txtTip = "Enable this to switch profiles when Trophies are below amount."
 			GUICtrlSetTip(-1, $txtTip)
@@ -140,5 +140,4 @@ $y += 30
 		$picProfileTrophy = GUICtrlCreateIcon($pIconLib, $eIcnTrophy, $x + 345, $y - 35, 16, 16)
 		$picProfileTrophy = GUICtrlCreateIcon($pIconLib, $eIcnTrophy, $x + 330, $y - 15, 32, 32)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-
 GUICtrlCreateTabItem("")

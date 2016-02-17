@@ -67,6 +67,9 @@ Func Collect()
 				If _Sleep($iDelayCollect1) Then Return
 			EndIf
 			ClickP($aAway, 1, 0, "#0329") ;Click Away
+			If $i >= 20 Then
+			    ExitLoop
+			EndIf
 		ElseIf $i >= 20 Then
 			ExitLoop
 		EndIf

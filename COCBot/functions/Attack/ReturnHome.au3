@@ -19,7 +19,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 	Local $hBitmap_Scaled
 	Local $i
 
-	If $DisableOtherEBO And $iMatchMode = $LB And $iChkDeploySettings[$LB] = 4 And $DESideEB And ($dropQueen Or $dropKing) Then
+	If $DisableOtherEBO And $iMatchMode = $LB And $iChkDeploySettings[$LB] = 6 And $DESideEB And ($dropQueen Or $dropKing) Then
 		SaveandDisableEBO()
 		SetLog("Disabling Normal End Battle Options", $COLOR_GREEN)
 	EndIf
@@ -52,7 +52,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 
 	EndIf
 
-	If $DisableOtherEBO And $iMatchMode = $LB And $iChkDeploySettings[$LB] = 4 And $DESideEB And ($dropQueen Or $dropKing) Then
+	If $DisableOtherEBO And $iMatchMode = $LB And $iChkDeploySettings[$LB] = 6 And $DESideEB And ($dropQueen Or $dropKing) Then
 		RevertEBO()
 	EndIf
 
@@ -114,7 +114,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 
 	If _Sleep($iDelayReturnHome2) Then Return ; short wait for return
 
-	TrayTip($sBotTitle, "", BitOR($TIP_ICONASTERISK, $TIP_NOSOUND)) ; clear village search match found message
+	TrayTip($sMODTitle, "", BitOR($TIP_ICONASTERISK, $TIP_NOSOUND)) ; clear village search match found message
 
 	If $GoldChangeCheck = True Then
 		$counter = 0
